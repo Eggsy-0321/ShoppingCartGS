@@ -46,6 +46,11 @@ public class SegmentLoopScroller : MonoBehaviour
     }
 
     /// <summary>
+    /// Current scroll speed. Returns 0 while scrolling is stopped.
+    /// </summary>
+    public float CurrentSpeed => _isScrolling ? baseSpeed : 0f;
+
+    /// <summary>
     /// スクロール中かどうか
     /// </summary>
     public bool IsScrolling => _isScrolling;
