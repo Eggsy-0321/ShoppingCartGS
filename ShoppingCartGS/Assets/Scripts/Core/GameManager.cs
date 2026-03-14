@@ -20,6 +20,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private WeightManager weightManager;
     [SerializeField] private ScoreManager scoreManager;
     [SerializeField] private SpeedManager speedManager;
+    [SerializeField] private FinalScoreManager finalScoreManager;
 
     [Header("Debug")]
     [SerializeField] private bool autoStartOnPlay = true;
@@ -29,6 +30,7 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         ResolveScoreManager();
+        ResolveFinalScoreManager();
 
         if (gameTimer != null)
         {
@@ -56,6 +58,7 @@ public class GameManager : MonoBehaviour
     {
         _isGameOver = false;
         ResolveScoreManager();
+        ResolveFinalScoreManager();
 
         if (weightManager != null)
         {
@@ -70,6 +73,11 @@ public class GameManager : MonoBehaviour
         if (speedManager != null)
         {
             speedManager.ResetSpeed();
+        }
+
+        if (finalScoreManager != null)
+        {
+            finalScoreManager.ResetFinalScore();
         }
 
         if (playerLaneController != null)
@@ -102,6 +110,7 @@ public class GameManager : MonoBehaviour
         if (_isGameOver) return;
         _isGameOver = true;
         ResolveScoreManager();
+        ResolveFinalScoreManager();
 
         Debug.Log("[GameManager] TIME UP");
 
@@ -115,9 +124,13 @@ public class GameManager : MonoBehaviour
             playerLaneController.enabled = false;
         }
 
-        if (scoreManager != null)
+        if (finalScoreManager != null)
         {
-            scoreManager.CaptureFinalScore();
+            float distance = worldScroller != null ? worldScroller.Distance : 0f;
+            int totalScore = scoreManager != null ? scoreManager.CurrentScore : 0;
+            float finalScore = finalScoreManager.CalculateFinalScore(distance, totalScore);
+
+            Debug.Log($"[GameManager] Final Score Calculated: {finalScore}");
         }
     }
 
@@ -126,6 +139,22 @@ public class GameManager : MonoBehaviour
         if (scoreManager == null)
         {
             scoreManager = FindFirstObjectByType<ScoreManager>();
+        }
+    }
+
+    private void ResolveFinalScoreManager()
+    {
+        if (finalScoreManager != null)
+        {
+            return;
+        }
+
+        finalScoreManager = FindFirstObjectByType<FinalScoreManager>();
+
+        if (finalScoreManager == null)
+        {
+            GameObject finalScoreManagerObject = new GameObject("FinalScoreManager");
+            finalScoreManager = finalScoreManagerObject.AddComponent<FinalScoreManager>();
         }
     }
 }

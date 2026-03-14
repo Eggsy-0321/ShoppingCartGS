@@ -219,3 +219,11 @@ v1.0 初期仕様策定
 ・アイテム取得時に itemDefinition.point を現在ポイントへ加算する
 ・ポイントは Game中 UI 表示する
 ・最終スコア計算は次工程で実装する
+------------------------------------------------------------
+
+【最終スコア計算仕様】
+・最終スコアはタイムアップ時に計算する
+・計算式は FinalScore = Distance × (1 + TotalScore / 100)
+・Distance は累計移動距離を使用する
+・TotalScore は累計ポイントを使用する
+・FinalScore は FinalScoreManager で保持し、Result画面で参照する
