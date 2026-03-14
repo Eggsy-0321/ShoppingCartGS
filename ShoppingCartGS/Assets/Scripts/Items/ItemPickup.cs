@@ -7,6 +7,7 @@ using UnityEngine;
 public class ItemPickup : MonoBehaviour
 {
     [SerializeField] private ItemDefinition itemDefinition;
+    [SerializeField] private WeightManager weightManager;
     private bool _isCollected;
 
     /// <summary>
@@ -15,6 +16,12 @@ public class ItemPickup : MonoBehaviour
     public void Initialize(ItemDefinition itemDefinition)
     {
         this.itemDefinition = itemDefinition;
+        ResolveWeightManager();
+    }
+
+    private void Awake()
+    {
+        ResolveWeightManager();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -37,7 +44,15 @@ public class ItemPickup : MonoBehaviour
             return;
         }
 
+        ResolveWeightManager();
+        if (weightManager == null)
+        {
+            Debug.LogWarning("[ItemPickup] WeightManager is missing during pickup.", this);
+            return;
+        }
+
         _isCollected = true;
+        weightManager.AddWeight(itemDefinition.weight);
 
         // Keep the pickup output simple for now so later systems can hook in here.
         Debug.Log(
@@ -45,5 +60,13 @@ public class ItemPickup : MonoBehaviour
             this);
 
         Destroy(gameObject);
+    }
+
+    private void ResolveWeightManager()
+    {
+        if (weightManager == null)
+        {
+            weightManager = FindFirstObjectByType<WeightManager>();
+        }
     }
 }

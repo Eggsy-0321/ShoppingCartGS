@@ -17,6 +17,8 @@ public class GameManager : MonoBehaviour
     [Tooltip("プレイヤー操作（PlayerLaneController）")]
     [SerializeField] private MonoBehaviour playerLaneController;
 
+    [SerializeField] private WeightManager weightManager;
+
     [Header("Debug")]
     [SerializeField] private bool autoStartOnPlay = true;
 
@@ -49,6 +51,11 @@ public class GameManager : MonoBehaviour
     public void StartGame()
     {
         _isGameOver = false;
+
+        if (weightManager != null)
+        {
+            weightManager.ResetWeight();
+        }
 
         if (playerLaneController != null)
         {

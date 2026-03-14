@@ -200,3 +200,9 @@ v1.0 初期仕様策定
 ・Player または Item のいずれかに Rigidbody を持たせる
 ・Item 側 Collider は Is Trigger を ON とする
 ・Player タグ一致時に取得成功とする
+【重量加算仕様】
+・現在の合計重量を WeightManager で管理する
+・ゲーム開始時の重量は 0 とする
+・アイテム取得時に itemDefinition.weight を現在重量へ加算する
+・重量は Game中 UI 表示する
+・重量による減速反映は次工程で実装する
