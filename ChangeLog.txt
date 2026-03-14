@@ -16,3 +16,18 @@
 ・スポーン高さを調整可能に修正
 ・管理オブジェクトTransform依存を解消
 ・アイテム位置ずれを修正
+2026-03-12
+アイテム取得システム実装
+・ItemPickup追加
+・Player接触で取得判定
+・取得ログ出力
+・取得後にアイテム削除
+2026-03-12
+アイテム初期化処理を修正
+・ItemMover へ SegmentLoopScroller / Player 参照を設定
+・ItemPickup へ ItemDefinition を設定
+・生成後 clone の参照不足を解消
+2026-03-12
+アイテム取得判定条件を整理
+・Trigger 判定の前提条件を明記
+・Player/Item の Rigidbody 要件を反映
