@@ -114,7 +114,26 @@ public class ItemSpawnManager : MonoBehaviour
             itemMover = spawnedItem.AddComponent<ItemMover>();
         }
 
+        if (segmentLoopScroller == null || playerTransform == null)
+        {
+            Debug.LogWarning("[ItemSpawnManager] ItemMover initialization skipped because references are missing.", spawnedItem);
+        }
+
         itemMover.Initialize(segmentLoopScroller, playerTransform);
+
+        // Ensure pickup logic is present even if the prefab does not carry it yet.
+        ItemPickup itemPickup = spawnedItem.GetComponent<ItemPickup>();
+        if (itemPickup == null)
+        {
+            itemPickup = spawnedItem.AddComponent<ItemPickup>();
+        }
+
+        if (selectedDefinition == null)
+        {
+            Debug.LogWarning("[ItemSpawnManager] ItemPickup initialization skipped because ItemDefinition is missing.", spawnedItem);
+        }
+
+        itemPickup.Initialize(selectedDefinition);
 
         if (logSpawnEvents)
         {

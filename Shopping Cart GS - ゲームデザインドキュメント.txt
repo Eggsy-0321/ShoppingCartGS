@@ -185,3 +185,18 @@ v1.0 初期仕様策定
 ・Y座標は Inspector 調整可能な spawnY を使用する
 ・Z座標は playerTransform.position.z + spawnForwardOffset を使用する
 ・スポーン座標系は統一して管理する
+【アイテム取得仕様】
+・アイテムは Player との接触で取得される
+・取得判定は Trigger を使用する
+・取得時は itemName / weight / point をログ出力する
+・取得後はアイテムを削除する
+・重量加算およびポイント加算は次工程で実装する
+【アイテム初期化仕様】
+・スポーン時に ItemMover へ SegmentLoopScroller と Player Transform を設定する
+・スポーン時に ItemPickup へ ItemDefinition を設定する
+・生成後の clone は必ず初期化された状態で動作する
+【アイテム取得判定仕様】
+・アイテム取得は Trigger 判定を使用する
+・Player または Item のいずれかに Rigidbody を持たせる
+・Item 側 Collider は Is Trigger を ON とする
+・Player タグ一致時に取得成功とする

@@ -6,9 +6,9 @@ using UnityEngine;
 public class ItemMover : MonoBehaviour
 {
     [SerializeField] private float despawnBackwardOffset = 10f;
+    [SerializeField] private SegmentLoopScroller segmentLoopScroller;
+    [SerializeField] private Transform playerTransform;
 
-    private SegmentLoopScroller _segmentLoopScroller;
-    private Transform _playerTransform;
     private bool _hasLoggedMissingReference;
 
     /// <summary>
@@ -16,8 +16,8 @@ public class ItemMover : MonoBehaviour
     /// </summary>
     public void Initialize(SegmentLoopScroller segmentLoopScroller, Transform playerTransform)
     {
-        _segmentLoopScroller = segmentLoopScroller;
-        _playerTransform = playerTransform;
+        this.segmentLoopScroller = segmentLoopScroller;
+        this.playerTransform = playerTransform;
         _hasLoggedMissingReference = false;
     }
 
@@ -31,7 +31,7 @@ public class ItemMover : MonoBehaviour
 
     private void Update()
     {
-        if (_segmentLoopScroller == null || _playerTransform == null)
+        if (segmentLoopScroller == null || playerTransform == null)
         {
             if (!_hasLoggedMissingReference)
             {
@@ -42,7 +42,7 @@ public class ItemMover : MonoBehaviour
             return;
         }
 
-        float currentSpeed = _segmentLoopScroller.CurrentSpeed;
+        float currentSpeed = segmentLoopScroller.CurrentSpeed;
         if (currentSpeed <= 0f)
         {
             return;
@@ -53,7 +53,7 @@ public class ItemMover : MonoBehaviour
         transform.position += Vector3.back * dz;
 
         // Remove items after they pass behind the player.
-        if (transform.position.z < _playerTransform.position.z - despawnBackwardOffset)
+        if (transform.position.z < playerTransform.position.z - despawnBackwardOffset)
         {
             Destroy(gameObject);
         }
