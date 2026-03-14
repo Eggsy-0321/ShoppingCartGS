@@ -8,6 +8,7 @@ public class ItemPickup : MonoBehaviour
 {
     [SerializeField] private ItemDefinition itemDefinition;
     [SerializeField] private WeightManager weightManager;
+    [SerializeField] private ScoreManager scoreManager;
     private bool _isCollected;
 
     /// <summary>
@@ -17,11 +18,13 @@ public class ItemPickup : MonoBehaviour
     {
         this.itemDefinition = itemDefinition;
         ResolveWeightManager();
+        ResolveScoreManager();
     }
 
     private void Awake()
     {
         ResolveWeightManager();
+        ResolveScoreManager();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -53,6 +56,12 @@ public class ItemPickup : MonoBehaviour
 
         _isCollected = true;
         weightManager.AddWeight(itemDefinition.weight);
+        ResolveScoreManager();
+
+        if (scoreManager != null)
+        {
+            scoreManager.AddScore(itemDefinition.point);
+        }
 
         // Keep the pickup output simple for now so later systems can hook in here.
         Debug.Log(
@@ -67,6 +76,14 @@ public class ItemPickup : MonoBehaviour
         if (weightManager == null)
         {
             weightManager = FindFirstObjectByType<WeightManager>();
+        }
+    }
+
+    private void ResolveScoreManager()
+    {
+        if (scoreManager == null)
+        {
+            scoreManager = FindFirstObjectByType<ScoreManager>();
         }
     }
 }

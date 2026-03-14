@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private MonoBehaviour playerLaneController;
 
     [SerializeField] private WeightManager weightManager;
+    [SerializeField] private ScoreManager scoreManager;
     [SerializeField] private SpeedManager speedManager;
 
     [Header("Debug")]
@@ -27,6 +28,8 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
+        ResolveScoreManager();
+
         if (gameTimer != null)
         {
             gameTimer.OnTimeUp += HandleTimeUp;
@@ -52,10 +55,16 @@ public class GameManager : MonoBehaviour
     public void StartGame()
     {
         _isGameOver = false;
+        ResolveScoreManager();
 
         if (weightManager != null)
         {
             weightManager.ResetWeight();
+        }
+
+        if (scoreManager != null)
+        {
+            scoreManager.ResetScore();
         }
 
         if (speedManager != null)
@@ -92,6 +101,7 @@ public class GameManager : MonoBehaviour
     {
         if (_isGameOver) return;
         _isGameOver = true;
+        ResolveScoreManager();
 
         Debug.Log("[GameManager] TIME UP");
 
@@ -103,6 +113,19 @@ public class GameManager : MonoBehaviour
         if (playerLaneController != null)
         {
             playerLaneController.enabled = false;
+        }
+
+        if (scoreManager != null)
+        {
+            scoreManager.CaptureFinalScore();
+        }
+    }
+
+    private void ResolveScoreManager()
+    {
+        if (scoreManager == null)
+        {
+            scoreManager = FindFirstObjectByType<ScoreManager>();
         }
     }
 }
