@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private MonoBehaviour playerLaneController;
 
     [SerializeField] private WeightManager weightManager;
+    [SerializeField] private SpeedManager speedManager;
 
     [Header("Debug")]
     [SerializeField] private bool autoStartOnPlay = true;
@@ -55,6 +56,11 @@ public class GameManager : MonoBehaviour
         if (weightManager != null)
         {
             weightManager.ResetWeight();
+        }
+
+        if (speedManager != null)
+        {
+            speedManager.ResetSpeed();
         }
 
         if (playerLaneController != null)

@@ -206,3 +206,10 @@ v1.0 初期仕様策定
 ・アイテム取得時に itemDefinition.weight を現在重量へ加算する
 ・重量は Game中 UI 表示する
 ・重量による減速反映は次工程で実装する
+【重量減速仕様】
+・現在速度は現在重量に応じて計算する
+・計算式は CurrentSpeed = max(MinSpeed, BaseSpeed - CurrentWeight × SlowdownPerWeight)
+・初期値は BaseSpeed = 12, SlowdownPerWeight = 0.15, MinSpeed = 3.5
+・現在速度は SegmentLoopScroller に反映する
+・距離計算も現在速度に基づく
+・速度は Game中 UI 表示する

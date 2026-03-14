@@ -34,6 +34,13 @@
 ・重量UI表示を追加
 ・ゲーム開始時の重量リセットを追加
 2026-03-12
+重量減速システム実装
+・SpeedManager追加
+・重量に応じた現在速度計算を追加
+・SegmentLoopScrollerへ速度反映
+・SpeedUI追加
+・最低速度制限を追加
+2026-03-12
 アイテム取得判定条件を整理
 ・Trigger 判定の前提条件を明記
 ・Player/Item の Rigidbody 要件を反映
