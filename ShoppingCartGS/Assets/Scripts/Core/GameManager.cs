@@ -21,6 +21,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private ScoreManager scoreManager;
     [SerializeField] private SpeedManager speedManager;
     [SerializeField] private FinalScoreManager finalScoreManager;
+    [SerializeField] private ItemSpawnManager itemSpawnManager;
+    [SerializeField] private ResultPanelUI resultPanelUI;
 
     [Header("Debug")]
     [SerializeField] private bool autoStartOnPlay = true;
@@ -59,6 +61,8 @@ public class GameManager : MonoBehaviour
         _isGameOver = false;
         ResolveScoreManager();
         ResolveFinalScoreManager();
+        ResolveResultPanel();
+        ResolveItemSpawnManager();
 
         if (weightManager != null)
         {
@@ -78,6 +82,24 @@ public class GameManager : MonoBehaviour
         if (finalScoreManager != null)
         {
             finalScoreManager.ResetFinalScore();
+        }
+
+        if (resultPanelUI != null)
+        {
+            resultPanelUI.HideResult();
+        }
+        else
+        {
+            Debug.LogWarning("[GameManager] ResultPanelUI was not found at game start.");
+        }
+
+        if (itemSpawnManager != null)
+        {
+            itemSpawnManager.ResetForNewGame();
+        }
+        else
+        {
+            Debug.LogWarning("[GameManager] ItemSpawnManager was not found at game start.");
         }
 
         if (playerLaneController != null)
@@ -105,14 +127,28 @@ public class GameManager : MonoBehaviour
         Debug.Log("[GameManager] Game Start");
     }
 
+    /// <summary>
+    /// Restarts the run inside the current scene without scene transitions.
+    /// </summary>
+    public void RestartGame()
+    {
+        StartGame();
+    }
+
     private void HandleTimeUp()
     {
         if (_isGameOver) return;
         _isGameOver = true;
         ResolveScoreManager();
         ResolveFinalScoreManager();
+        ResolveResultPanel();
 
         Debug.Log("[GameManager] TIME UP");
+
+        if (gameTimer != null)
+        {
+            gameTimer.StopTimer();
+        }
 
         if (worldScroller != null)
         {
@@ -124,6 +160,11 @@ public class GameManager : MonoBehaviour
             playerLaneController.enabled = false;
         }
 
+        if (scoreManager != null)
+        {
+            scoreManager.CaptureFinalScore();
+        }
+
         if (finalScoreManager != null)
         {
             float distance = worldScroller != null ? worldScroller.Distance : 0f;
@@ -131,6 +172,15 @@ public class GameManager : MonoBehaviour
             float finalScore = finalScoreManager.CalculateFinalScore(distance, totalScore);
 
             Debug.Log($"[GameManager] Final Score Calculated: {finalScore}");
+        }
+
+        if (resultPanelUI != null)
+        {
+            resultPanelUI.ShowResult();
+        }
+        else
+        {
+            Debug.LogWarning("[GameManager] TimeUp occurred, but ResultPanelUI was not found.");
         }
     }
 
@@ -155,6 +205,22 @@ public class GameManager : MonoBehaviour
         {
             GameObject finalScoreManagerObject = new GameObject("FinalScoreManager");
             finalScoreManager = finalScoreManagerObject.AddComponent<FinalScoreManager>();
+        }
+    }
+
+    private void ResolveResultPanel()
+    {
+        if (resultPanelUI == null)
+        {
+            resultPanelUI = FindFirstObjectByType<ResultPanelUI>(FindObjectsInactive.Include);
+        }
+    }
+
+    private void ResolveItemSpawnManager()
+    {
+        if (itemSpawnManager == null)
+        {
+            itemSpawnManager = FindFirstObjectByType<ItemSpawnManager>();
         }
     }
 }

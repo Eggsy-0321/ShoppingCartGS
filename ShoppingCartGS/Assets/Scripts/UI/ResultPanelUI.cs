@@ -1,0 +1,146 @@
+using TMPro;
+using UnityEngine;
+
+/// <summary>
+/// Manages the in-scene result panel display.
+/// Shows the latest run values when time is up and forwards Retry requests to the GameManager.
+/// </summary>
+public class ResultPanelUI : MonoBehaviour
+{
+    [Header("Panel Root")]
+    [SerializeField] private GameObject panelRoot;
+
+    [Header("Result Text")]
+    [SerializeField] private TextMeshProUGUI distanceText;
+    [SerializeField] private TextMeshProUGUI weightText;
+    [SerializeField] private TextMeshProUGUI finalScoreText;
+
+    [Header("References")]
+    [SerializeField] private SegmentLoopScroller segmentLoopScroller;
+    [SerializeField] private WeightManager weightManager;
+    [SerializeField] private FinalScoreManager finalScoreManager;
+    [SerializeField] private GameManager gameManager;
+
+    private void Awake()
+    {
+        ResolveReferences();
+        HideResult();
+    }
+
+    /// <summary>
+    /// Updates all result labels with the latest values, then shows the panel.
+    /// </summary>
+    public void ShowResult()
+    {
+        ResolveReferences();
+
+        if (panelRoot == null)
+        {
+            Debug.LogWarning("[ResultPanelUI] Panel root is not assigned.");
+            return;
+        }
+
+        float distance = segmentLoopScroller != null ? segmentLoopScroller.Distance : 0f;
+        int weight = weightManager != null ? weightManager.CurrentWeight : 0;
+        float finalScore = finalScoreManager != null ? finalScoreManager.CurrentFinalScore : 0f;
+
+        if (distanceText != null)
+        {
+            distanceText.text = $"Distance : {Mathf.FloorToInt(distance)}m";
+        }
+
+        if (weightText != null)
+        {
+            weightText.text = $"Weight : {weight}";
+        }
+
+        if (finalScoreText != null)
+        {
+            finalScoreText.text = $"FinalScore : {Mathf.FloorToInt(finalScore)}";
+        }
+
+        SetPanelActive(true);
+    }
+
+    /// <summary>
+    /// Hides the result panel.
+    /// </summary>
+    public void HideResult()
+    {
+        SetPanelActive(false);
+    }
+
+    /// <summary>
+    /// Called from the Retry button to restart the current game scene state.
+    /// </summary>
+    public void OnClickRetry()
+    {
+        ResolveReferences();
+
+        if (gameManager == null)
+        {
+            Debug.LogWarning("[ResultPanelUI] GameManager is not assigned.");
+            return;
+        }
+
+        gameManager.RestartGame();
+    }
+
+    private void ResolveReferences()
+    {
+        if (segmentLoopScroller == null)
+        {
+            segmentLoopScroller = FindFirstObjectByType<SegmentLoopScroller>();
+        }
+
+        if (weightManager == null)
+        {
+            weightManager = FindFirstObjectByType<WeightManager>();
+        }
+
+        if (finalScoreManager == null)
+        {
+            finalScoreManager = FindFirstObjectByType<FinalScoreManager>();
+        }
+
+        if (gameManager == null)
+        {
+            gameManager = FindFirstObjectByType<GameManager>();
+        }
+
+        if (panelRoot == null)
+        {
+            panelRoot = gameObject;
+        }
+
+        if (segmentLoopScroller == null)
+        {
+            Debug.LogWarning("[ResultPanelUI] SegmentLoopScroller is not assigned.");
+        }
+
+        if (weightManager == null)
+        {
+            Debug.LogWarning("[ResultPanelUI] WeightManager is not assigned.");
+        }
+
+        if (finalScoreManager == null)
+        {
+            Debug.LogWarning("[ResultPanelUI] FinalScoreManager is not assigned.");
+        }
+
+        if (gameManager == null)
+        {
+            Debug.LogWarning("[ResultPanelUI] GameManager is not assigned.");
+        }
+    }
+
+    private void SetPanelActive(bool isActive)
+    {
+        if (panelRoot == null)
+        {
+            panelRoot = gameObject;
+        }
+
+        panelRoot.SetActive(isActive);
+    }
+}

@@ -88,6 +88,31 @@ public class ItemSpawnManager : MonoBehaviour
         _lastDistance = 0f;
     }
 
+    /// <summary>
+    /// Clears all currently spawned items and resets spawn progress for a new run.
+    /// </summary>
+    public void ResetForNewGame()
+    {
+        ClearSpawnedItems();
+        ResetSpawnDistance();
+    }
+
+    /// <summary>
+    /// Removes spawned item instances under the spawn root.
+    /// </summary>
+    public void ClearSpawnedItems()
+    {
+        if (spawnRoot == null)
+        {
+            return;
+        }
+
+        for (int i = spawnRoot.childCount - 1; i >= 0; i--)
+        {
+            Destroy(spawnRoot.GetChild(i).gameObject);
+        }
+    }
+
     private void TrySpawnItem()
     {
         ItemDefinition selectedDefinition = SelectItemDefinition();

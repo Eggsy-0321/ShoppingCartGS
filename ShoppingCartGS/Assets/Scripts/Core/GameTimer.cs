@@ -64,6 +64,7 @@ public class GameTimer : MonoBehaviour
     {
         RemainingSeconds = Mathf.Max(0f, gameDurationSeconds);
         _isRunning = false;
+        UpdateTimeUI(RemainingSeconds);
     }
 
     private void UpdateTimeUI(float seconds)
