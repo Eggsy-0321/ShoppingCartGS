@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// Manages the in-scene result panel display.
@@ -7,6 +8,8 @@ using UnityEngine;
 /// </summary>
 public class ResultPanelUI : MonoBehaviour
 {
+    private const string DefaultTitleSceneName = "Title";
+
     [Header("Panel Root")]
     [SerializeField] private GameObject panelRoot;
 
@@ -20,6 +23,9 @@ public class ResultPanelUI : MonoBehaviour
     [SerializeField] private WeightManager weightManager;
     [SerializeField] private FinalScoreManager finalScoreManager;
     [SerializeField] private GameManager gameManager;
+
+    [Header("Scene Flow")]
+    [SerializeField] private string titleSceneName = DefaultTitleSceneName;
 
     private void Awake()
     {
@@ -84,6 +90,20 @@ public class ResultPanelUI : MonoBehaviour
         }
 
         gameManager.RestartGame();
+    }
+
+    /// <summary>
+    /// Called from a future Title button to return to the title scene.
+    /// </summary>
+    public void OnClickBackToTitle()
+    {
+        if (string.IsNullOrWhiteSpace(titleSceneName))
+        {
+            Debug.LogWarning("[ResultPanelUI] Title scene name is not assigned.");
+            return;
+        }
+
+        SceneManager.LoadScene(titleSceneName);
     }
 
     private void ResolveReferences()
