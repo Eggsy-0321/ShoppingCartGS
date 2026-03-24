@@ -4,7 +4,7 @@ using UnityEngine.SceneManagement;
 
 /// <summary>
 /// Manages the in-scene result panel display.
-/// Shows the latest run values when time is up and forwards Retry requests to the GameManager.
+/// Responsible only for showing/hiding the panel and reflecting result values.
 /// </summary>
 public class ResultPanelUI : MonoBehaviour
 {
@@ -12,6 +12,10 @@ public class ResultPanelUI : MonoBehaviour
 
     [Header("Panel Root")]
     [SerializeField] private GameObject panelRoot;
+
+    [Header("Buttons")]
+    [SerializeField] private GameObject retryButtonRoot;
+    [SerializeField] private GameObject titleButtonRoot;
 
     [Header("Result Text")]
     [SerializeField] private TextMeshProUGUI distanceText;
@@ -39,33 +43,9 @@ public class ResultPanelUI : MonoBehaviour
     public void ShowResult()
     {
         ResolveReferences();
-
-        if (panelRoot == null)
-        {
-            Debug.LogWarning("[ResultPanelUI] Panel root is not assigned.");
-            return;
-        }
-
-        float distance = segmentLoopScroller != null ? segmentLoopScroller.Distance : 0f;
-        int weight = weightManager != null ? weightManager.CurrentWeight : 0;
-        float finalScore = finalScoreManager != null ? finalScoreManager.CurrentFinalScore : 0f;
-
-        if (distanceText != null)
-        {
-            distanceText.text = $"Distance : {Mathf.FloorToInt(distance)}m";
-        }
-
-        if (weightText != null)
-        {
-            weightText.text = $"Weight : {weight}";
-        }
-
-        if (finalScoreText != null)
-        {
-            finalScoreText.text = $"FinalScore : {Mathf.FloorToInt(finalScore)}";
-        }
-
+        UpdateResultTexts();
         SetPanelActive(true);
+        SetActionButtonsActive(true);
     }
 
     /// <summary>
@@ -93,7 +73,7 @@ public class ResultPanelUI : MonoBehaviour
     }
 
     /// <summary>
-    /// Called from a future Title button to return to the title scene.
+    /// Called from the Title button to return to the title scene.
     /// </summary>
     public void OnClickBackToTitle()
     {
@@ -108,6 +88,11 @@ public class ResultPanelUI : MonoBehaviour
 
     private void ResolveReferences()
     {
+        if (panelRoot == null)
+        {
+            panelRoot = gameObject;
+        }
+
         if (segmentLoopScroller == null)
         {
             segmentLoopScroller = FindFirstObjectByType<SegmentLoopScroller>();
@@ -127,10 +112,39 @@ public class ResultPanelUI : MonoBehaviour
         {
             gameManager = FindFirstObjectByType<GameManager>();
         }
+    }
 
-        if (panelRoot == null)
+    private void UpdateResultTexts()
+    {
+        float distance = segmentLoopScroller != null ? segmentLoopScroller.Distance : 0f;
+        int weight = weightManager != null ? weightManager.CurrentWeight : 0;
+        float finalScore = finalScoreManager != null ? finalScoreManager.CurrentFinalScore : 0f;
+
+        if (distanceText != null)
         {
-            panelRoot = gameObject;
+            distanceText.text = $"Distance : {Mathf.FloorToInt(distance)}m";
+        }
+        else
+        {
+            Debug.LogWarning("[ResultPanelUI] Distance text is not assigned.");
+        }
+
+        if (weightText != null)
+        {
+            weightText.text = $"Weight : {weight}";
+        }
+        else
+        {
+            Debug.LogWarning("[ResultPanelUI] Weight text is not assigned.");
+        }
+
+        if (finalScoreText != null)
+        {
+            finalScoreText.text = $"FinalScore : {Mathf.FloorToInt(finalScore)}";
+        }
+        else
+        {
+            Debug.LogWarning("[ResultPanelUI] Final score text is not assigned.");
         }
 
         if (segmentLoopScroller == null)
@@ -151,6 +165,19 @@ public class ResultPanelUI : MonoBehaviour
         if (gameManager == null)
         {
             Debug.LogWarning("[ResultPanelUI] GameManager is not assigned.");
+        }
+    }
+
+    private void SetActionButtonsActive(bool isActive)
+    {
+        if (retryButtonRoot != null)
+        {
+            retryButtonRoot.SetActive(isActive);
+        }
+
+        if (titleButtonRoot != null)
+        {
+            titleButtonRoot.SetActive(isActive);
         }
     }
 

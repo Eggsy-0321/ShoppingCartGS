@@ -8,13 +8,13 @@ using UnityEngine.Serialization;
 public class TitleMenuUI : MonoBehaviour
 {
     [FormerlySerializedAs("gameSceneName")]
-    [SerializeField] private string GameSceneName = "Game";
+    [SerializeField] private string gameSceneName = "Game";
 
     /// <summary>
     /// Called by the Start button to open the main game scene.
     /// </summary>
     public void OnClickStart()
     {
-        SceneManager.LoadScene(GameSceneName);
+        SceneManager.LoadScene(gameSceneName);
     }
 }

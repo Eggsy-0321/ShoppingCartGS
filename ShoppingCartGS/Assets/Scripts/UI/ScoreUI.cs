@@ -27,7 +27,11 @@ public class ScoreUI : MonoBehaviour
             return;
         }
 
-        ResolveScoreManager();
+        if (scoreManager == null)
+        {
+            ResolveScoreManager();
+        }
+
         UpdateScoreText(scoreManager != null ? scoreManager.CurrentScore : 0);
     }
 
