@@ -12,7 +12,12 @@ public class SpeedUI : MonoBehaviour
 
     private void Start()
     {
-        UpdateSpeedText(0f);
+        if (speedText == null)
+        {
+            return;
+        }
+
+        UpdateSpeedText(speedManager != null ? speedManager.CurrentSpeed : 0f);
     }
 
     private void Update()

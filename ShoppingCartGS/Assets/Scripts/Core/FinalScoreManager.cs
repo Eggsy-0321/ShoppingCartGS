@@ -15,7 +15,7 @@ public class FinalScoreManager : MonoBehaviour
 
     /// <summary>
     /// Calculates and stores the final score.
-    /// Formula: FinalScore = Distance * (1 + TotalScore / 100)
+    /// Formula: FinalScore = Distance * (1 + TotalScore / 200)
     /// Negative inputs are clamped to zero.
     /// </summary>
     public float CalculateFinalScore(float distance, int totalScore)
@@ -23,7 +23,7 @@ public class FinalScoreManager : MonoBehaviour
         float safeDistance = Mathf.Max(0f, distance);
         int safeTotalScore = Mathf.Max(0, totalScore);
 
-        _currentFinalScore = safeDistance * (1f + (safeTotalScore / 100f));
+        _currentFinalScore = safeDistance * (1f + (safeTotalScore / 200f));
         return _currentFinalScore;
     }
 

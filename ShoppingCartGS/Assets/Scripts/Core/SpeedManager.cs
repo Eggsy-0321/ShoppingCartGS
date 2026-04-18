@@ -11,8 +11,9 @@ public class SpeedManager : MonoBehaviour
 
     [Header("Speed Settings")]
     [SerializeField] private float baseSpeed = 12f;
-    [SerializeField] private float slowdownPerWeight = 0.15f;
-    [SerializeField] private float minSpeed = 3.5f;
+    [SerializeField] private float slowdownPerWeight = 0.20f;
+    [SerializeField] private float minSpeed = 6.5f;
+    [SerializeField] private float weightCurvePower = 0.7f;
 
     private float _currentSpeed = 12f;
 
@@ -51,7 +52,10 @@ public class SpeedManager : MonoBehaviour
     private void RecalculateSpeed()
     {
         int currentWeight = weightManager != null ? weightManager.CurrentWeight : 0;
-        float calculatedSpeed = baseSpeed - (currentWeight * slowdownPerWeight);
+
+        // Keep the early slowdown gentle, then let the weight penalty build up later in the run.
+        float curvedWeight = Mathf.Pow(currentWeight, weightCurvePower);
+        float calculatedSpeed = baseSpeed - (curvedWeight * slowdownPerWeight);
         _currentSpeed = Mathf.Max(minSpeed, calculatedSpeed);
     }
 
@@ -70,6 +74,7 @@ public class SpeedManager : MonoBehaviour
         baseSpeed = Mathf.Max(0f, baseSpeed);
         slowdownPerWeight = Mathf.Max(0f, slowdownPerWeight);
         minSpeed = Mathf.Max(0f, minSpeed);
+        weightCurvePower = Mathf.Max(0.01f, weightCurvePower);
 
         if (minSpeed > baseSpeed)
         {
