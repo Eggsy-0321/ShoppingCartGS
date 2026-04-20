@@ -426,7 +426,7 @@ public class ResultPanelUI : MonoBehaviour
             return;
         }
 
-        finalScoreText.text = $"{finalScoreLabel} : {Mathf.Max(0, scoreValue)}";
+        finalScoreText.text = Mathf.Max(0, scoreValue).ToString();
     }
 
     private void WarnForMissingReferences()
