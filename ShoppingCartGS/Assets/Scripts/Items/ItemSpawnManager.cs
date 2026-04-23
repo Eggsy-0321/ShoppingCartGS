@@ -128,9 +128,11 @@ public class ItemSpawnManager : MonoBehaviour
         }
 
         Vector3 worldSpawnPosition = GetWorldSpawnPosition();
-        GameObject spawnedItem = Instantiate(selectedDefinition.prefab, worldSpawnPosition, Quaternion.identity);
-        Transform spawnedTransform = spawnedItem.transform;
-        spawnedTransform.SetParent(spawnRoot, true);
+        GameObject spawnedItem = Instantiate(
+            selectedDefinition.prefab,
+            worldSpawnPosition,
+            selectedDefinition.prefab.transform.rotation,
+            spawnRoot);
 
         // Each spawned item moves itself using the same speed as the world scroll.
         ItemMover itemMover = spawnedItem.GetComponent<ItemMover>();
