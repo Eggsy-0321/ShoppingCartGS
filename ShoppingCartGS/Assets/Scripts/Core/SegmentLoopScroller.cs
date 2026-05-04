@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 /// <summary>
 /// B案（プレイヤー固定）用：床などのセグメントを後ろに流し、
@@ -18,8 +19,9 @@ public class SegmentLoopScroller : MonoBehaviour
     [SerializeField] private float baseSpeed = 12f;
 
     [Header("Segment Settings")]
-    [Tooltip("1セグメントの長さ。GroundがPlaneでScaleZ=20なら 10*20=200")]
-    [SerializeField] private float segmentLength = 200f;
+    [Tooltip("Segment同士のZ間隔。初期配置はTransformで設定し、ループ時の再配置距離に使用する")]
+    [FormerlySerializedAs("segmentLength")]
+    [SerializeField] private float segmentSpacing = 20f;
 
     [Tooltip("完全に後ろへ抜けた判定に使う余裕")]
     [SerializeField] private float recycleBuffer = 5f;
@@ -88,9 +90,12 @@ public class SegmentLoopScroller : MonoBehaviour
             segments[i].position = p;
         }
 
+        // 初期配置はUnity上のTransformをそのまま使い、
+        // ここではループ時の再配置だけを担当する
         // 後ろに抜けたセグメントを前方へ回す
         float playerZ = player != null ? player.position.z : 0f;
-        float half = segmentLength * 0.5f;
+        float spacing = Mathf.Max(0.01f, segmentSpacing);
+        float half = spacing * 0.5f;
 
         float frontMostZ = float.MinValue;
         for (int i = 0; i < segments.Length; i++)
@@ -113,7 +118,7 @@ public class SegmentLoopScroller : MonoBehaviour
             if (segFrontEdgeZ < playerZ - recycleBuffer)
             {
                 Vector3 p = seg.position;
-                p.z = frontMostZ + segmentLength;
+                p.z = frontMostZ + spacing;
                 seg.position = p;
 
                 frontMostZ = p.z;
