@@ -161,3 +161,9 @@ FinalScore表示を数値専用に修正
 ・床、左右棚、奥壁、天井、照明用の背景配置枠を作成
 ・背景は見た目専用とし、Collider / Rigidbody は追加しない方針で整理
 ・SpawnRootとは分離し、SegmentLoopScrollerに追従する構成とした
+2026-05-05
+奥背景棚の固定背景方針を追加
+・奥棚画像を Segment から独立した StaticBackgroundRoot 配下で管理する方針を追加
+・奥棚はスクロール対象外の固定背景として扱う
+・奥棚は見た目専用とし、Collider / Rigidbody は追加しない方針を維持
+・SpawnRoot、アイテム処理、重量減速、スコア計算には影響しないことを明記
