@@ -23,6 +23,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private FinalScoreManager finalScoreManager;
     [SerializeField] private ItemSpawnManager itemSpawnManager;
     [SerializeField] private ResultPanelUI resultPanelUI;
+    [SerializeField] private PlayerAnimationController playerAnimationController;
 
     [Header("Debug")]
     [SerializeField] private bool autoStartOnPlay = true;
@@ -63,6 +64,7 @@ public class GameManager : MonoBehaviour
         ResolveFinalScoreManager();
         ResolveResultPanel();
         ResolveItemSpawnManager();
+        ResolvePlayerAnimationController();
 
         if (weightManager != null)
         {
@@ -107,6 +109,11 @@ public class GameManager : MonoBehaviour
             playerLaneController.enabled = true;
         }
 
+        if (playerAnimationController != null)
+        {
+            playerAnimationController.RestartRunAnimation();
+        }
+
         if (worldScroller != null)
         {
             worldScroller.ResetDistance();
@@ -142,6 +149,7 @@ public class GameManager : MonoBehaviour
         ResolveScoreManager();
         ResolveFinalScoreManager();
         ResolveResultPanel();
+        ResolvePlayerAnimationController();
 
         Debug.Log("[GameManager] TIME UP");
 
@@ -158,6 +166,11 @@ public class GameManager : MonoBehaviour
         if (playerLaneController != null)
         {
             playerLaneController.enabled = false;
+        }
+
+        if (playerAnimationController != null)
+        {
+            playerAnimationController.StopRunAnimation();
         }
 
         if (scoreManager != null)
@@ -221,6 +234,14 @@ public class GameManager : MonoBehaviour
         if (itemSpawnManager == null)
         {
             itemSpawnManager = FindFirstObjectByType<ItemSpawnManager>();
+        }
+    }
+
+    private void ResolvePlayerAnimationController()
+    {
+        if (playerAnimationController == null)
+        {
+            playerAnimationController = FindFirstObjectByType<PlayerAnimationController>();
         }
     }
 }
