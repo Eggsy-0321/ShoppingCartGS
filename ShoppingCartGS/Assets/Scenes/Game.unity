@@ -184,8 +184,8 @@ Transform:
   m_GameObject: {fileID: 27205946}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_LocalPosition: {x: 0, y: -0.78, z: 0}
+  m_LocalScale: {x: 2.3, y: 2.3, z: 2.3}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 103550422}
@@ -290,6 +290,7 @@ GameObject:
   - component: {fileID: 103550420}
   - component: {fileID: 103550419}
   - component: {fileID: 103550423}
+  - component: {fileID: 103550424}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -403,6 +404,22 @@ MonoBehaviour:
   startLaneIndex: 1
   laneMoveSpeed: 12
   arriveThreshold: 0.01
+--- !u!114 &103550424
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 103550418}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ca72d0e024d41948a58dcd01d9c6d44, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  laneController: {fileID: 103550423}
+  minFlickDistance: 100
+  horizontalDominanceRatio: 1.2
+  enableMouseInputInEditor: 1
 --- !u!1 &132839514
 GameObject:
   m_ObjectHideFlags: 0
@@ -3357,7 +3374,7 @@ Transform:
   m_GameObject: {fileID: 963194225}
   serializedVersion: 2
   m_LocalRotation: {x: 0.108225875, y: -0, z: -0, w: 0.9941263}
-  m_LocalPosition: {x: 0, y: 2.54, z: -15.94}
+  m_LocalPosition: {x: 0, y: 2.7, z: -15.78}
   m_LocalScale: {x: 1, y: 0.96936524, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

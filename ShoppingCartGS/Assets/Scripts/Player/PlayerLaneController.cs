@@ -1,24 +1,23 @@
 using UnityEngine;
 
 /// <summary>
-/// 3レーン(-1.4, 0, +1.4)を左右入力で移動するコントローラー（初心者向け）
-/// - PCテスト用に A/D または ←/→ で操作
-/// - レーン間はスムーズに補間移動
+/// Moves the player across the fixed 3-lane layout.
+/// Keyboard input remains available for PC-side verification.
 /// </summary>
 public class PlayerLaneController : MonoBehaviour
 {
     [Header("Lane Settings")]
-    [Tooltip("左・中央・右レーンのX座標。GDD: -1.4 / 0 / +1.4")]
+    [Tooltip("Lane X positions for left, center, and right.")]
     [SerializeField] private float[] laneX = new float[] { -1.4f, 0f, 1.4f };
 
-    [Tooltip("開始レーン (0=左, 1=中央, 2=右)")]
+    [Tooltip("Starting lane index. 0 = left, 1 = center, 2 = right.")]
     [SerializeField] private int startLaneIndex = 1;
 
     [Header("Movement Settings")]
-    [Tooltip("レーン変更の移動速度（大きいほどキビキビ）")]
+    [Tooltip("Horizontal movement speed when changing lanes.")]
     [SerializeField] private float laneMoveSpeed = 12f;
 
-    [Tooltip("移動完了と見なす距離")]
+    [Tooltip("Snap to the lane when the remaining distance is below this value.")]
     [SerializeField] private float arriveThreshold = 0.01f;
 
     private int _currentLaneIndex;
@@ -26,20 +25,18 @@ public class PlayerLaneController : MonoBehaviour
 
     private void Awake()
     {
-        // レーン配列の最低限チェック
         if (laneX == null || laneX.Length != 3)
         {
-            Debug.LogError("[PlayerLaneController] laneX は要素3つ（左/中/右）で設定してください。");
+            Debug.LogError("[PlayerLaneController] laneX must contain exactly 3 lane positions.");
             laneX = new float[] { -1.4f, 0f, 1.4f };
         }
 
         _currentLaneIndex = Mathf.Clamp(startLaneIndex, 0, 2);
         _targetX = laneX[_currentLaneIndex];
 
-        // 初期位置をレーンに合わせる（Xだけ合わせる）
-        Vector3 p = transform.position;
-        p.x = _targetX;
-        transform.position = p;
+        Vector3 position = transform.position;
+        position.x = _targetX;
+        transform.position = position;
     }
 
     private void Update()
@@ -50,44 +47,68 @@ public class PlayerLaneController : MonoBehaviour
 
     private void HandleInput()
     {
-        // 左入力：A または ←
         if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
         {
-            ChangeLane(-1);
+            RequestMoveLeft();
         }
 
-        // 右入力：D または →
         if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
         {
-            ChangeLane(+1);
+            RequestMoveRight();
         }
+    }
+
+    public void RequestMoveLeft()
+    {
+        if (!CanAcceptLaneChangeRequest())
+        {
+            return;
+        }
+
+        ChangeLane(-1);
+    }
+
+    public void RequestMoveRight()
+    {
+        if (!CanAcceptLaneChangeRequest())
+        {
+            return;
+        }
+
+        ChangeLane(+1);
     }
 
     private void ChangeLane(int delta)
     {
-        int next = Mathf.Clamp(_currentLaneIndex + delta, 0, 2);
-        if (next == _currentLaneIndex) return;
+        int nextLaneIndex = Mathf.Clamp(_currentLaneIndex + delta, 0, 2);
+        if (nextLaneIndex == _currentLaneIndex)
+        {
+            return;
+        }
 
-        _currentLaneIndex = next;
+        _currentLaneIndex = nextLaneIndex;
         _targetX = laneX[_currentLaneIndex];
     }
 
     private void MoveToTargetLane()
     {
-        Vector3 pos = transform.position;
-        float newX = Mathf.MoveTowards(pos.x, _targetX, laneMoveSpeed * Time.deltaTime);
-        pos.x = newX;
-        transform.position = pos;
+        Vector3 position = transform.position;
+        float newX = Mathf.MoveTowards(position.x, _targetX, laneMoveSpeed * Time.deltaTime);
+        position.x = newX;
+        transform.position = position;
 
-        // ピタッと止める（微小揺れ防止）
         if (Mathf.Abs(transform.position.x - _targetX) <= arriveThreshold)
         {
-            pos = transform.position;
-            pos.x = _targetX;
-            transform.position = pos;
+            position = transform.position;
+            position.x = _targetX;
+            transform.position = position;
         }
     }
 
-    // いまどのレーンか外部から参照したくなった時用（後で使う可能性あり）
+    private bool CanAcceptLaneChangeRequest()
+    {
+        return isActiveAndEnabled;
+    }
+
     public int CurrentLaneIndex => _currentLaneIndex;
 }
