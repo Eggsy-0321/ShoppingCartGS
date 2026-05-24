@@ -30,6 +30,8 @@ public class GameManager : MonoBehaviour
 
     private bool _isGameOver;
 
+    public bool IsGameOver => _isGameOver;
+
     private void Awake()
     {
         ResolveScoreManager();

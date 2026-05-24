@@ -267,6 +267,20 @@ v1.0 初期仕様策定
 ・ResultPanel 表示時は RetryButton と TitleButton を両方表示する
 ・ResultPanel 非表示時は両ボタンも非表示状態とする
 ・TitleButton から Title シーンへ戻れる
+【一時停止仕様】
+・ゲーム中に Pause ボタンから一時停止できる
+・Pause ボタンは HUD 右上に配置する
+・Pause 中は PausePanel を表示する
+・PausePanel には RESUME / RETRY / TOP ボタンを配置する
+・PausePanel 表示中はゲーム画面を背後に残し、半透明の背景で暗く表示する
+・RESUME ボタンで一時停止を解除し、ゲームへ戻る
+・RETRY ボタンは既存の Retry 処理を使用する
+・TOP ボタンは既存の Title 遷移処理を使用する
+・Pause 中はタイマー、背景スクロール、アイテム移動、アイテムスポーン、プレイヤー操作、プレイヤーアニメーション、距離加算を停止する
+・Pause 中はタイムアップしない
+・ResultPanel 表示中は Pause できない
+・Retry / TOP 実行時は一時停止状態を解除してから既存処理を実行する
+・既存の3レーン移動、重量減速、スコア計算、Result仕様は変更しない
 【奥背景棚 固定背景仕様】
 ・奥背景棚はスーパー通路の突き当たりに見える固定背景として扱う
 ・奥背景棚は Segment 配下ではなく StaticBackgroundRoot 配下に配置する

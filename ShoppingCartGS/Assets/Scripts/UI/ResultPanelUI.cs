@@ -1,6 +1,7 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 /// <summary>
 /// Result panel UI controller.
@@ -21,6 +22,8 @@ public class ResultPanelUI : MonoBehaviour
     [Header("Buttons")]
     [SerializeField] private GameObject retryButtonRoot;
     [SerializeField] private GameObject titleButtonRoot;
+    [SerializeField] private Button retryButton;
+    [SerializeField] private Button titleButton;
 
     [Header("Result Text")]
     [SerializeField] private TextMeshProUGUI distanceText;
@@ -73,6 +76,26 @@ public class ResultPanelUI : MonoBehaviour
     private int _targetDistance;
     private int _targetWeight;
     private int _targetFinalScore;
+
+    public bool IsVisible => panelRoot != null ? panelRoot.activeSelf : gameObject.activeSelf;
+
+    public Button RetryButton
+    {
+        get
+        {
+            ResolveReferences();
+            return retryButton;
+        }
+    }
+
+    public Button TitleButton
+    {
+        get
+        {
+            ResolveReferences();
+            return titleButton;
+        }
+    }
 
     private void Awake()
     {
@@ -182,6 +205,16 @@ public class ResultPanelUI : MonoBehaviour
         if (panelCanvasGroup == null && panelRoot != null)
         {
             panelCanvasGroup = panelRoot.GetComponent<CanvasGroup>();
+        }
+
+        if (retryButton == null && retryButtonRoot != null)
+        {
+            retryButton = retryButtonRoot.GetComponent<Button>();
+        }
+
+        if (titleButton == null && titleButtonRoot != null)
+        {
+            titleButton = titleButtonRoot.GetComponent<Button>();
         }
 
         if (segmentLoopScroller == null)
