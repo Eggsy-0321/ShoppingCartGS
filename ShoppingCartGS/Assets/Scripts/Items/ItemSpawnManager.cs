@@ -7,6 +7,10 @@ using UnityEngine;
 /// </summary>
 public class ItemSpawnManager : MonoBehaviour
 {
+    private const string LightCategoryName = "Light";
+    private const string MediumCategoryName = "Medium";
+    private const string HeavyCategoryName = "Heavy";
+
     [Header("References")]
     [SerializeField] private SegmentLoopScroller segmentLoopScroller;
     [SerializeField] private Transform playerTransform;
@@ -14,6 +18,12 @@ public class ItemSpawnManager : MonoBehaviour
 
     [Header("Spawn Settings")]
     [SerializeField] private List<ItemDefinition> itemDefinitions = new List<ItemDefinition>();
+    [SerializeField] private ItemDefinition lightItemDefinition;
+    [SerializeField] private ItemDefinition mediumItemDefinition;
+    [SerializeField] private ItemDefinition heavyItemDefinition;
+    [SerializeField] private GameObject[] lightItemPrefabs;
+    [SerializeField] private GameObject[] mediumItemPrefabs;
+    [SerializeField] private GameObject[] heavyItemPrefabs;
     [SerializeField] private float spawnIntervalDistance = 10f;
     [SerializeField] private float spawnForwardOffset = 10f;
     [SerializeField] private float spawnY = 0.1f;
@@ -27,6 +37,7 @@ public class ItemSpawnManager : MonoBehaviour
 
     private void Awake()
     {
+        ResolveCategoryDefinitionReferences();
         ValidateReferences();
         ValidateLaneSettings();
         ResetSpawnDistance();
@@ -53,6 +64,8 @@ public class ItemSpawnManager : MonoBehaviour
         {
             lanePositionsX = new float[] { -1.4f, 0f, 1.4f };
         }
+
+        ResolveCategoryDefinitionReferences();
     }
 
     private void Update()
@@ -121,17 +134,19 @@ public class ItemSpawnManager : MonoBehaviour
             return;
         }
 
-        if (selectedDefinition.prefab == null)
+        GameObject selectedPrefab = SelectSpawnPrefab(selectedDefinition);
+        if (selectedPrefab == null)
         {
-            Debug.LogWarning($"[ItemSpawnManager] Prefab is missing for item '{selectedDefinition.itemName}'.");
+            Debug.LogError(
+                $"[ItemSpawnManager] Spawn skipped because no valid prefab could be resolved for '{selectedDefinition.itemName}'.");
             return;
         }
 
         Vector3 worldSpawnPosition = GetWorldSpawnPosition();
         GameObject spawnedItem = Instantiate(
-            selectedDefinition.prefab,
+            selectedPrefab,
             worldSpawnPosition,
-            selectedDefinition.prefab.transform.rotation,
+            selectedPrefab.transform.rotation,
             spawnRoot);
 
         // Each spawned item moves itself using the same speed as the world scroll.
@@ -169,6 +184,147 @@ public class ItemSpawnManager : MonoBehaviour
                 $"(worldX: {worldSpawnPosition.x:0.0}, worldY: {worldSpawnPosition.y:0.00}, worldZ: {worldSpawnPosition.z:0.0}).",
                 spawnedItem);
         }
+    }
+
+    private GameObject SelectSpawnPrefab(ItemDefinition selectedDefinition)
+    {
+        GameObject[] categoryPrefabs = null;
+        string categoryName = string.Empty;
+
+        if (selectedDefinition == lightItemDefinition)
+        {
+            categoryPrefabs = lightItemPrefabs;
+            categoryName = LightCategoryName;
+        }
+        else if (selectedDefinition == mediumItemDefinition)
+        {
+            categoryPrefabs = mediumItemPrefabs;
+            categoryName = MediumCategoryName;
+        }
+        else if (selectedDefinition == heavyItemDefinition)
+        {
+            categoryPrefabs = heavyItemPrefabs;
+            categoryName = HeavyCategoryName;
+        }
+        else
+        {
+            Debug.LogWarning(
+                $"[ItemSpawnManager] ItemDefinition '{selectedDefinition.itemName}' is not mapped to a category prefab array. Falling back to the prefab on the definition.");
+            return selectedDefinition.prefab;
+        }
+
+        if (TryGetRandomPrefab(categoryPrefabs, categoryName, out GameObject selectedPrefab))
+        {
+            return selectedPrefab;
+        }
+
+        if (selectedDefinition.prefab != null)
+        {
+            Debug.LogWarning(
+                $"[ItemSpawnManager] {categoryName} prefab array is not usable. Falling back to the prefab assigned on '{selectedDefinition.itemName}'.");
+            return selectedDefinition.prefab;
+        }
+
+        Debug.LogError(
+            $"[ItemSpawnManager] {categoryName} prefab array is not usable and fallback prefab is missing on '{selectedDefinition.itemName}'.");
+        return null;
+    }
+
+    private void ResolveCategoryDefinitionReferences()
+    {
+        if (itemDefinitions == null)
+        {
+            return;
+        }
+
+        ResolveCategoryDefinitionReference(lightItemDefinition);
+        ResolveCategoryDefinitionReference(mediumItemDefinition);
+        ResolveCategoryDefinitionReference(heavyItemDefinition);
+    }
+
+    private void ResolveCategoryDefinitionReference(ItemDefinition categoryDefinition)
+    {
+        if (categoryDefinition == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < itemDefinitions.Count; i++)
+        {
+            if (ReferenceEquals(itemDefinitions[i], categoryDefinition))
+            {
+                return;
+            }
+        }
+
+        for (int i = 0; i < itemDefinitions.Count; i++)
+        {
+            ItemDefinition listedDefinition = itemDefinitions[i];
+            if (!HasSameRepresentativePrefab(listedDefinition, categoryDefinition))
+            {
+                continue;
+            }
+
+            itemDefinitions[i] = categoryDefinition;
+            return;
+        }
+    }
+
+    private bool HasSameRepresentativePrefab(ItemDefinition firstDefinition, ItemDefinition secondDefinition)
+    {
+        return firstDefinition != null
+            && secondDefinition != null
+            && firstDefinition.prefab != null
+            && firstDefinition.prefab == secondDefinition.prefab;
+    }
+
+    private bool TryGetRandomPrefab(GameObject[] prefabCandidates, string categoryName, out GameObject selectedPrefab)
+    {
+        selectedPrefab = null;
+
+        if (prefabCandidates == null || prefabCandidates.Length == 0)
+        {
+            Debug.LogWarning($"[ItemSpawnManager] {categoryName} prefab array is null or empty.");
+            return false;
+        }
+
+        int validPrefabCount = 0;
+        for (int i = 0; i < prefabCandidates.Length; i++)
+        {
+            if (prefabCandidates[i] != null)
+            {
+                validPrefabCount++;
+            }
+        }
+
+        if (validPrefabCount == 0)
+        {
+            Debug.LogWarning($"[ItemSpawnManager] {categoryName} prefab array does not contain any valid prefab references.");
+            return false;
+        }
+
+        int targetValidIndex = Random.Range(0, validPrefabCount);
+        int currentValidIndex = 0;
+
+        for (int i = 0; i < prefabCandidates.Length; i++)
+        {
+            GameObject prefabCandidate = prefabCandidates[i];
+            if (prefabCandidate == null)
+            {
+                continue;
+            }
+
+            if (currentValidIndex == targetValidIndex)
+            {
+                selectedPrefab = prefabCandidate;
+                return true;
+            }
+
+            currentValidIndex++;
+        }
+
+        Debug.LogError($"[ItemSpawnManager] Failed to select a valid prefab from the {categoryName} prefab array.");
+        return false;
     }
 
     private Vector3 GetWorldSpawnPosition()
@@ -250,6 +406,10 @@ public class ItemSpawnManager : MonoBehaviour
         {
             Debug.LogWarning("[ItemSpawnManager] ItemDefinitions list is empty.");
         }
+
+        ValidateCategoryDefinition(lightItemDefinition, LightCategoryName);
+        ValidateCategoryDefinition(mediumItemDefinition, MediumCategoryName);
+        ValidateCategoryDefinition(heavyItemDefinition, HeavyCategoryName);
     }
 
     private void ValidateLaneSettings()
@@ -258,6 +418,20 @@ public class ItemSpawnManager : MonoBehaviour
         {
             Debug.LogWarning("[ItemSpawnManager] Lane settings were invalid. Reverting to default 3-lane positions.");
             lanePositionsX = new float[] { -1.4f, 0f, 1.4f };
+        }
+    }
+
+    private void ValidateCategoryDefinition(ItemDefinition definition, string categoryName)
+    {
+        if (definition == null)
+        {
+            Debug.LogWarning($"[ItemSpawnManager] {categoryName} ItemDefinition is not assigned. Category prefab array fallback will be unavailable.");
+            return;
+        }
+
+        if (itemDefinitions != null && !itemDefinitions.Contains(definition))
+        {
+            Debug.LogWarning($"[ItemSpawnManager] {categoryName} ItemDefinition is not included in ItemDefinitions.");
         }
     }
 }

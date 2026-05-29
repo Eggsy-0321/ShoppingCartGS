@@ -1820,6 +1820,36 @@ MonoBehaviour:
     point: 100
     spawnWeight: 20
     prefab: {fileID: 6383411290923672314, guid: 32ed55aaa7cd85c45be26fae16aa00da, type: 3}
+  lightItemDefinition:
+    itemName: LightItem
+    weight: 1
+    point: 10
+    spawnWeight: 55
+    prefab: {fileID: 488065010853233206, guid: 1a3937217a8b71e478c50f4512c96ff3, type: 3}
+  mediumItemDefinition:
+    itemName: MediumItem
+    weight: 3
+    point: 30
+    spawnWeight: 30
+    prefab: {fileID: 6592456347565650192, guid: dfc2547f423adaf42a07b5c2421092e5, type: 3}
+  heavyItemDefinition:
+    itemName: HeavyItem
+    weight: 8
+    point: 80
+    spawnWeight: 15
+    prefab: {fileID: 6383411290923672314, guid: 32ed55aaa7cd85c45be26fae16aa00da, type: 3}
+  lightItemPrefabs:
+  - {fileID: 488065010853233206, guid: 1a3937217a8b71e478c50f4512c96ff3, type: 3}
+  - {fileID: 488065010853233206, guid: 11644f8c66c56904ca5bf6d166fa4a5c, type: 3}
+  - {fileID: 488065010853233206, guid: 6b67821a1102caf46bf78dba29a74d72, type: 3}
+  mediumItemPrefabs:
+  - {fileID: 6592456347565650192, guid: dfc2547f423adaf42a07b5c2421092e5, type: 3}
+  - {fileID: 6592456347565650192, guid: 7125d2c53b4a97949a6d84e766c42b60, type: 3}
+  - {fileID: 6592456347565650192, guid: d618b17efcd7c1341a291859395a2930, type: 3}
+  heavyItemPrefabs:
+  - {fileID: 6383411290923672314, guid: 32ed55aaa7cd85c45be26fae16aa00da, type: 3}
+  - {fileID: 6383411290923672314, guid: bc54681330d39de459a16dd14be0a8e5, type: 3}
+  - {fileID: 6383411290923672314, guid: 8008e086064b9be4fab453aca6f0539b, type: 3}
   spawnIntervalDistance: 10
   spawnForwardOffset: 30
   spawnY: 0
